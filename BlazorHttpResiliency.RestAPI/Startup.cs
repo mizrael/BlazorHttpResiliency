@@ -33,7 +33,10 @@ namespace BlazorHttpResiliency.RestAPI
                 options.AddPolicy(name: _corsOriginsPolicyName,
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:5000", "https://localhost:5001");
+                        builder
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .AllowAnyOrigin();
                     });
             });
 
