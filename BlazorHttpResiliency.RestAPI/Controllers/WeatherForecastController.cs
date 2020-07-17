@@ -28,7 +28,7 @@ namespace BlazorHttpResiliency.RestAPI.Controllers
         {
             _callsCount++;
             if((_callsCount & 1) == 0)
-                throw new Exception($"oops {_callsCount}!");
+                throw new Exception($"something, somewhere, went terribly, terribly wrong.");
 
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
