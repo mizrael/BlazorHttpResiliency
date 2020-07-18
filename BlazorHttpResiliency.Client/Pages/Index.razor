@@ -1,7 +1,58 @@
-﻿@page "/"
+@page "/"
+@inject WeatherClient WeatherClient
 
-<h1>Hello, world!</h1>
+<h1>Weather forecast</h1>
 
-Welcome to your new app.
+<button @onclick="OnRefreshWeather">Refresh</button>
+<button @onclick="OnFallbackRefreshWeather">Refresh with fallback</button>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+@if (loading)
+{
+    <p><em>Loading...</em></p>
+}
+else if (null == forecasts || !forecasts.Any())
+{
+    <p><strong>No data available at the moment. Please try again later.</strong></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp. (C)</th>
+                <th>Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in forecasts)
+            {
+                <tr>
+                    <td>@forecast.Date.ToShortDateString()</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IEnumerable<WeatherForecast> forecasts;
+    private bool loading = true;
+
+    protected override Task OnInitializedAsync() => FetchWeatherDataAsync(false);
+
+    private async Task OnRefreshWeather(MouseEventArgs e) => await FetchWeatherDataAsync(false);
+
+    private async Task OnFallbackRefreshWeather(MouseEventArgs e) => await FetchWeatherDataAsync(true);
+
+    private async Task FetchWeatherDataAsync(bool forceFail)
+    {
+        loading = true;
+        forecasts = await WeatherClient.GetWeather(forceFail);
+        loading = false;
+    }
+}

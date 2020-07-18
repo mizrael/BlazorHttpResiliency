@@ -24,10 +24,10 @@ namespace BlazorHttpResiliency.RestAPI.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        public IEnumerable<WeatherForecast> Get(bool forceFail = false)
         {
             _callsCount++;
-            if((_callsCount & 1) == 0)
+            if(forceFail || (_callsCount & 1) == 0)
                 throw new Exception($"something, somewhere, went terribly, terribly wrong.");
 
             var rng = new Random();
